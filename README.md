@@ -2,6 +2,9 @@
 
 ## Convert Activity tests to Operation tests
 
+In order to show users both `Activity` and `Operation` tests, we have a converter.
+This implies converted tests are written in a specific style.
+
 We currently don't use a `bin/` command.
 
 ```ruby

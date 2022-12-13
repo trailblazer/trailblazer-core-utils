@@ -1,3 +1,4 @@
+require "forwardable"
 require "trailblazer/core/utils/convert_operation_test"
 require "trailblazer/core/utils/symbol_inspect_for"
 

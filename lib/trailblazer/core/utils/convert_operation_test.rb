@@ -43,6 +43,12 @@ module Trailblazer
               line = line.sub("< Trailblazer::Activity::Railway", "< Trailblazer::Operation")
               line = line.gsub("::Activity", "::Operation")
 
+              if match = line.match(/#!hint (.+)/)
+                ws = line.match(/^(\s+)/) # Find out number of whitespace before code starts.
+
+                line = (" " * ws[1].size) + match[1] + "\n"
+              else
+
               # if within_marker
                 line = line.sub("signal, (ctx, _) =", "result =")
                 if within_ctx_to_result
@@ -58,6 +64,7 @@ module Trailblazer
                   semantic = match[2]
                   line = "#{match[1]}result.success? # => #{semantic == ":success" ?  true : false}\n"
                 end
+              end
               # end
 
               line = line.sub("assert_equal ctx", "assert_equal result")

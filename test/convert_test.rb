@@ -80,6 +80,8 @@ module X
 
       assert_invoke Memo::Operation::Create, seq: "[]", params: {memo: {text: "Do not forget!"}}, expected_ctx_variables: {model: model}
       assert_invoke Memo::Operation::Create, seq: "[:handle_errors]", params: {}, terminus: :failure
+
+      variable = Trailblazer::Operation
     end
   end
 end

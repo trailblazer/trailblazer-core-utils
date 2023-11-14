@@ -40,14 +40,13 @@ module Trailblazer
               # puts "@@@@@ #{line.inspect}"
               line = ""
             else
-              line = line.sub("< Trailblazer::Activity::Railway", "< Trailblazer::Operation")
-              line = line.gsub("::Activity", "::Operation")
-
               if match = line.match(/#!hint (.+)/)
                 ws = line.match(/^(\s+)/) # Find out number of whitespace before code starts.
 
                 line = (" " * ws[1].size) + match[1] + "\n"
               else
+                line = line.sub("< Trailblazer::Activity::Railway", "< Trailblazer::Operation")
+                line = line.gsub("::Activity", "::Operation")
 
               # if within_marker
                 line = line.sub("signal, (ctx, _) =", "result =")

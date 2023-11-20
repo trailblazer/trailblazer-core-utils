@@ -46,6 +46,7 @@ module Trailblazer
                 line = (" " * ws[1].size) + match[1] + "\n"
               else
                 line = line.sub("< Trailblazer::Activity::Railway", "< Trailblazer::Operation")
+                line = line.sub("< Trailblazer::Activity::FastTrack", "< Trailblazer::Operation")
                 line = line.gsub("::Activity", "::Operation")
 
               # if within_marker

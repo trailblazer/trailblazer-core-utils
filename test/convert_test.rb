@@ -83,6 +83,9 @@ module X
 
       variable = Trailblazer::Operation
     end
+
+    class Update < Trailblazer::Operation
+    end
   end
 end
 )

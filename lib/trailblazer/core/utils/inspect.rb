@@ -7,7 +7,7 @@ module Trailblazer
         old_string = object.inspect
         # old_string = %({{symbol: 1, "string" => 2},"string" => 1})
 
-        new_string = old_string.gsub(/(\w+): /, ':\1=>')
+        new_string = old_string.gsub(/([{ ])(\w+): /, '\1:\2=>')
         new_string = new_string.gsub(" => ", "=>")
 
         return new_string

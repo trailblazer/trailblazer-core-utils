@@ -1,3 +1,7 @@
+## [0.0.4]
+
+* Extend `Utils.inspect` so we can feed it strings that may contain hash inspects.
+
 ## [0.0.3]
 
 * Introduce `Utils.inspect` to cover `Hash#inspect` tests across all Rubies, including 3.4.

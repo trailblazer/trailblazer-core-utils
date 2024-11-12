@@ -2,22 +2,19 @@ module Trailblazer
   module Core
     module Utils
       def self.inspect(object)
+        return Inspect.convert_hash_inspect(object) if object.is_a?(String)
         return object.inspect unless object.is_a?(Hash)
 
         old_string = object.inspect
-        # old_string = %({{symbol: 1, "string" => 2},"string" => 1})
 
-        new_string = old_string.gsub(/([{ ])(\w+): /, '\1:\2=>')
-        new_string = new_string.gsub(" => ", "=>")
+        Inspect.convert_hash_inspect(old_string)
+      end
 
-        return new_string
-        "asdfafasdff"
-
-        # if Gem::Version.new(RUBY_VERSION) < Gem::Version.new("2.7.0") || RUBY_ENGINE == 'jruby'
-        #   "#{name}"
-        # else
-        #   ":#{name}"
-        # end
+      module Inspect
+        def self.convert_hash_inspect(hash_inspect)
+          new_string = hash_inspect.gsub(/([{ ])(\w+): /, '\1:\2=>')
+          new_string.gsub(" => ", "=>")
+        end
       end
     end
   end

@@ -13,8 +13,12 @@ class HashInspectTest < Minitest::Spec
 
     #<Method: Trailb
 
-    puts Trailblazer::Core::Utils.inspect(hsh)
+    # puts Trailblazer::Core::Utils.inspect(hsh)
     assert_equal Trailblazer::Core::Utils.inspect(hsh), %({:symbol=>{:symbol=>1, "string"=>2}, "string"=>1, #<struct HashInspectTest::Memo id=1>=>true, #<Method: HashInspectTest(Kernel)#inspect()>=>9})
+  end
+
+  it "can convert only the hash part of a longer string" do
+    assert_equal Trailblazer::Core::Utils.inspect("A string {with: true, and: 1} a hash"), %(A string {:with=>true, :and=>1} a hash)
   end
 
   it "uses native {#inspect} for other classes" do

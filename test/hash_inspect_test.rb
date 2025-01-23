@@ -21,6 +21,28 @@ class HashInspectTest < Minitest::Spec
     assert_equal Trailblazer::Core::Utils.inspect("A string {with: true, and: 1} a hash"), %(A string {:with=>true, :and=>1} a hash)
   end
 
+#   it "can convert multi-line strings" do
+#     multi_line = %(Actual contract errors: \e[33m{:title=>[\"must be filled\"], :content=>[\"must be filled\", \"size cannot be less than 8\"]}\e[0m.
+# --- expected
+# +++ actual
+# @@ -1 +1 @@
+# -{:title=>[\"is XXX\"]}
+# +{:title=>[\"must be filled\"], :content=>[\"must be filled\", \"size cannot be less than 8\"]}
+# )
+
+#     assert_equal Trailblazer::Core::Utils.inspect("A string {with: true, and: 1} a hash"), %(A string {:with=>true, :and=>1} a hash)
+#   end
+
+  it "doesn't convert non-hashes in multi-line strings" do
+    multi_line = %({Trailblazer::Test::Testing::Memo::Operation::Create} didn't fail, it passed.
+Expected: false
+  Actual: true)
+
+    assert_equal Trailblazer::Core::Utils.inspect(multi_line), %({Trailblazer::Test::Testing::Memo::Operation::Create} didn't fail, it passed.
+Expected: false
+  Actual: true)
+  end
+
   it "uses native {#inspect} for other classes" do
     assert_equal Trailblazer::Core::Utils.inspect(Struct.new(:id).new(1)), %(#<struct id=1>)
   end

@@ -12,7 +12,7 @@ module Trailblazer
 
       module Inspect
         def self.convert_hash_inspect(hash_inspect)
-          new_string = hash_inspect.gsub(/([{ ])(\w+): /, '\1:\2=>')
+          new_string = hash_inspect.gsub(/({|, )(\w+): /, '\1:\2=>')
           new_string.gsub(" => ", "=>")
         end
       end

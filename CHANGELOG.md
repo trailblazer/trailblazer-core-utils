@@ -1,3 +1,7 @@
+## [0.0.5]
+
+* In `Utils.inspect`, limit the regex to one liner hashes.
+
 ## [0.0.4]
 
 * Extend `Utils.inspect` so we can feed it strings that may contain hash inspects.

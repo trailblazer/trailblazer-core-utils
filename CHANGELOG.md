@@ -1,3 +1,7 @@
+## [0.0.6]
+
+* Introduce `Utils.strip` to remove Object IDs for anonymous objects in strings.
+
 ## [0.0.5]
 
 * In `Utils.inspect`, limit the regex to one liner hashes.

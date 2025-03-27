@@ -75,6 +75,12 @@ module X
       Trailblazer::Activity::Railway #!hint variable = Trailblazer::Operation
     end
 
+    #~keep
+    Trailblazer::Activity::Railway
+    Trailblazer::Activity::Signal
+    Trailblazer::Activity::FastTrack
+    #~keep end
+
     class Update < Trailblazer::Activity::FastTrack
     end
   end

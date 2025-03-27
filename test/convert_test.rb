@@ -73,7 +73,7 @@ module X
       #:memo-call-model end
       #~ctx_to_result end
 
-      assert_equal result.event.inspect, %(#<Trailblazer::Operation::End semantic=:success>)
+      assert_equal result.terminus.inspect, %(#<Trailblazer::Operation::End semantic=:success>)
       assert_equal result.inspect, %({:params=>{:memo=>{:text=>\\\"Do not forget!\\\"}}, :model=>#<struct X::DocsActivityTest::Memo options={:text=>\\\"Do not forget!\\\"}>})
 
       model = ctx[:model]

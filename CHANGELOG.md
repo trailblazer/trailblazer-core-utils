@@ -1,3 +1,7 @@
+## [0.0.7]
+
+* In `convert_operation_test`, it is `result.terminus` now.
+
 ## [0.0.6]
 
 * Introduce `Utils.strip` to remove Object IDs for anonymous objects in strings.

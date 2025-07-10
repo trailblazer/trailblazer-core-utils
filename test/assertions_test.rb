@@ -2,7 +2,7 @@ require "test_helper"
 require "trailblazer/activity/dsl/linear"
 
 class TestingTest < Minitest::Spec
-  extend Trailblazer::Core::Utils::DefSteps.def_steps(:model)
+  extend Trailblazer::Core.def_steps(:model)
 
   klass = Class.new do
     def self.persist
@@ -28,7 +28,7 @@ class TestingTest < Minitest::Spec
     test = Class.new(Test) do
       let(:activity) do
         Class.new(Trailblazer::Activity::Railway) do
-          include Trailblazer::Core::Utils::DefSteps.def_steps(:b, :c)
+          include Trailblazer::Core.def_steps(:b, :c)
 
           step :b
           step :c
@@ -110,7 +110,7 @@ Expected: :not_right
     test = Class.new(Test) do
       let(:activity) do
         Class.new(Trailblazer::Activity::Railway) do
-          include Trailblazer::Core::Utils::DefSteps.def_steps(:c)
+          include Trailblazer::Core.def_steps(:c)
 
           def self.b((ctx, flow_options), **)
             ctx[:from_b] = 1

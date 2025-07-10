@@ -16,6 +16,8 @@ module Trailblazer
       extend Forwardable
       def_delegator Utils::ConvertOperationTest, :call, :convert_operation_test
       def_delegator Utils, :symbol_inspect_for
+      def_delegator Utils::DefSteps, :def_steps
+      def_delegator Utils::DefSteps, :def_tasks
     end
   end
 end

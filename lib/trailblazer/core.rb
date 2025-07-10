@@ -3,6 +3,8 @@ require "trailblazer/core/utils/convert_operation_test"
 require "trailblazer/core/utils/symbol_inspect_for"
 require "trailblazer/core/utils/inspect"
 require "trailblazer/core/utils/strip"
+require "trailblazer/core/utils/def_steps"
+require "trailblazer/core/utils/assertions"
 
 module Trailblazer
   module Core

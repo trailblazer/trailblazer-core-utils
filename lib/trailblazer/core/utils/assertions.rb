@@ -1,6 +1,6 @@
 module Trailblazer
   module Core::Utils
-     module Assertions
+    module Assertions
       # `:seq` is always passed into ctx.
       # @param :seq String What the {:seq} variable in the result ctx looks like. (expected seq)
       # @param :expected_ctx_variables Variables that are added during the call by the asserted activity.

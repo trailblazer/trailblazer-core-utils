@@ -1,3 +1,7 @@
+## [0.0.9]
+
+* Move `#render_task` to `Assertions` module.
+
 ## [0.0.8]
 
 * Add `Core.def_steps` and `Core.def_tasks` to create test steps. This logic used to sit

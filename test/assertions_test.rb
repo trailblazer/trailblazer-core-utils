@@ -19,9 +19,9 @@ class TestingTest < Minitest::Spec
   end
 
   it "what" do
-    assert_equal Trailblazer::Core::Utils.render_task(TestingTest.method(:model)), %{#<Method: TestingTest.model>}
-    assert_equal Trailblazer::Core::Utils.render_task(:model), %{model}
-    assert_equal Trailblazer::Core::Utils.render_task(klass.method(:persist)), %{#<Method: #<Class:0x>.persist>}
+    assert_equal Trailblazer::Core::Utils::Assertions.render_task(TestingTest.method(:model)), %{#<Method: TestingTest.model>}
+    assert_equal Trailblazer::Core::Utils::Assertions.render_task(:model), %{model}
+    assert_equal Trailblazer::Core::Utils::Assertions.render_task(klass.method(:persist)), %{#<Method: #<Class:0x>.persist>}
   end
 
   it "#assert_call" do

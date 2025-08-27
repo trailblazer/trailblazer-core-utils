@@ -56,13 +56,15 @@ module Trailblazer
       end
 
       def Cct(activity)
-        Activity::Introspect::Render.(activity, inspect_task: Assertions.method(:render_task))
+        Activity::Introspect::Render.(activity, inspect_task: method(:render_task))
+      end
+
+      module_function
+      # Use this in {#Cct}.
+      def render_task(proc)
+        Activity::Introspect.render_task(proc)
       end
     end
 
-    # Use this in {#Cct}.
-    def self.render_task(proc)
-      Activity::Introspect.render_task(proc)
-    end
   end
 end

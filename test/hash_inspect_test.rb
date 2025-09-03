@@ -21,6 +21,13 @@ class HashInspectTest < Minitest::Spec
     assert_equal Trailblazer::Core::Utils.inspect("A string {with: true, and: 1} a hash"), %(A string {:with=>true, :and=>1} a hash)
   end
 
+  it "converts hash in inspected oobjects, too" do
+    hash_inspect = %(#<Trailblazer::Context::Container wrapped_options={model: Module} mutable_options={ctx_in_model: "#<Trailblazer::Context::Container wrapped_options={model: Module} mutable_options={}>"}>)
+
+    assert_equal Trailblazer::Core::Utils::Inspect.convert_hash_inspect(hash_inspect),
+      %(#<Trailblazer::Context::Container wrapped_options={:model=>Module} mutable_options={:ctx_in_model=>"#<Trailblazer::Context::Container wrapped_options={:model=>Module} mutable_options={}>"}>)
+  end
+
 #   it "can convert multi-line strings" do
 #     multi_line = %(Actual contract errors: \e[33m{:title=>[\"must be filled\"], :content=>[\"must be filled\", \"size cannot be less than 8\"]}\e[0m.
 # --- expected

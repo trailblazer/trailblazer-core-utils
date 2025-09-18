@@ -48,11 +48,11 @@ module Trailblazer
 
       alias_method :assert_process, :assert_process_for
 
-      def assert_circuit(schema, circuit)
+      def assert_circuit(schema, circuit) # FIXME: test
         cct = Cct(schema)
 
         cct = cct.gsub("#<Trailblazer::Activity::TaskBuilder::Task user_proc=", "<*")
-        assert_equal circuit.to_s, cct
+        assert_equal cct, circuit.to_s
       end
 
       def Cct(activity)

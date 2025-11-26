@@ -11,7 +11,7 @@ class DefStepsTest < Minitest::Spec
       step :b
     end
 
-    signal, (ctx, _) = activity.([{seq: []}])
+    ctx, _, signal = activity.({seq: []}, {})
 
     assert_equal ctx.inspect, %({:seq=>[:a, :b]})
   end

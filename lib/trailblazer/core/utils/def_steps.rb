@@ -32,11 +32,11 @@ module Trailblazer
           module_function
 
           names.each do |name|
-            define_method(name) do |(ctx, flow_options), **|
+            define_method(name) do |ctx, flow_options, circuit_options|
               ctx[:seq] << name
               signal = ctx.key?(name) ? ctx[name] : Activity::Right
 
-              return signal, [ctx, flow_options]
+              return ctx, flow_options, signal
             end
           end
         end

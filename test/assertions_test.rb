@@ -112,9 +112,9 @@ Expected: :not_right
         Class.new(Trailblazer::Activity::Railway) do
           include Trailblazer::Core.def_steps(:c)
 
-          def self.b((ctx, flow_options), **)
+          def self.b(ctx, flow_options, circuit_options)
             ctx[:from_b] = 1
-            return Trailblazer::Activity::Right, [ctx, flow_options]
+            return ctx, flow_options, Trailblazer::Activity::Right
           end
 
           step task: method(:b)
@@ -152,7 +152,7 @@ Expected: :not_right
   it "#assert_invoke" do
     test = Class.new(Test) do
       class MyActivity
-        def self.call((ctx, flow_options), **circuit_options)
+        def self.call(ctx, flow_options, circuit_options)
 
           # ctx = ctx.merge(
           # )
@@ -166,7 +166,7 @@ Expected: :not_right
             }
           ]
 
-          return Trailblazer::Activity::End.new(semantic: :success), [mock_ctx, flow_options]
+          return mock_ctx, flow_options, Trailblazer::Activity::End.new(semantic: :success)
         end
       end
 
@@ -185,7 +185,7 @@ Expected: :not_right
     #0001
       #@ test that we can pass {:circuit_options}
       it {
-        signal, (ctx, flow_options) = assert_invoke activity, seq: "[:call]", circuit_options: {start: "yes"}
+        ctx, flow_options, signal = assert_invoke activity, seq: "[:call]", circuit_options: {start: "yes"}
 
         assert_equal ctx.invisible[:circuit_options].keys.inspect, %([:start, :runner, :wrap_runtime, :activity])
         assert_equal ctx.invisible[:circuit_options][:start], "yes"
@@ -195,7 +195,7 @@ Expected: :not_right
     #0002
       #@ test that we can pass {:flow_options}
       it {
-        signal, (ctx, flow_options) = assert_invoke activity, seq: "[:call]", flow_options: {start: "yes"}
+        ctx, flow_options, signal = assert_invoke activity, seq: "[:call]", flow_options: {start: "yes"}
 
         assert_equal ctx.invisible[:flow_options].keys.inspect, %([:start])
         assert_equal ctx.invisible[:flow_options][:start], "yes"
@@ -204,7 +204,7 @@ Expected: :not_right
     #0003
       #@ we return circuit interface
       it {
-        signal, (ctx, flow_options) = assert_invoke activity, seq: "[:call]", flow_options: {start: "yes"}
+        ctx, flow_options, signal = assert_invoke activity, seq: "[:call]", flow_options: {start: "yes"}
 
         assert_equal signal.inspect, %(#<Trailblazer::Activity::End semantic=:success>)
         assert_equal Trailblazer::Core::Utils.inspect(ctx), %({:seq=>[:call]})

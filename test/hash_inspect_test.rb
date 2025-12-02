@@ -31,9 +31,10 @@ class HashInspectTest < Minitest::Spec
   end
 
   it "converts Context to 3.3 style, too" do
-    ctx = Trailblazer::Context(seq: [:a])
+    require "trailblazer/context"
+    ctx = Trailblazer.Context(seq: [:a])
 
-    assert_equal Trailblazer::Core::Utils.inspect(ctx), %(#<Trailblazer::Context::Container wrapped_options={:seq=>[:a]} mutable_options={}>)
+    assert_equal Trailblazer::Core::Utils.inspect(ctx.inspect), %(#<Trailblazer::Context::Container wrapped_options={:seq=>[:a]} mutable_options={}>)
   end
 
 #   it "can convert multi-line strings" do

@@ -13,6 +13,6 @@ class DefStepsTest < Minitest::Spec
 
     ctx, _, signal = activity.({seq: []}, {})
 
-    assert_equal ctx.inspect, %({:seq=>[:a, :b]})
+    assert_equal Trailblazer::Core::Utils.inspect(ctx), %({:seq=>[:a, :b]})
   end
 end

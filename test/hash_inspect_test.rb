@@ -8,6 +8,7 @@ class HashInspectTest < Minitest::Spec
       symbol: {symbol: 1, "string" => 2},
       "string" => 1,
       Memo.new(1) => true,
+      # method(:inspect) => 9,
       method(:inspect) => 9,
       seq: [:a, :b],
     }
@@ -15,7 +16,7 @@ class HashInspectTest < Minitest::Spec
     #<Method: Trailb
 
     # puts Trailblazer::Core::Utils.inspect(hsh)
-    assert_equal Trailblazer::Core::Utils.inspect(hsh), %({:symbol=>{:symbol=>1, "string"=>2}, "string"=>1, #<struct HashInspectTest::Memo id=1>=>true, #<Method: HashInspectTest(Kernel)#inspect()>=>9, :seq=>[:a, :b]})
+    assert_equal Trailblazer::Core::Utils.inspect(hsh), %({:symbol=>{:symbol=>1, "string"=>2}, "string"=>1, #<struct HashInspectTest::Memo id=1>=>true, #{method(:inspect)}=>9, :seq=>[:a, :b]})
   end
 
   it "can convert only the hash part of a longer string" do

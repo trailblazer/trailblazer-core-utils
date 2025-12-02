@@ -30,6 +30,12 @@ class HashInspectTest < Minitest::Spec
       %(#<Trailblazer::Context::Container wrapped_options={:model=>Module} mutable_options={:ctx_in_model=>"#<Trailblazer::Context::Container wrapped_options={:model=>Module} mutable_options={}>"}>)
   end
 
+  it "converts Context to 3.3 style, too" do
+    ctx = Trailblazer::Context(seq: [:a])
+
+    assert_equal Trailblazer::Core::Utils.inspect(ctx), %(#<Trailblazer::Context::Container wrapped_options={:seq=>[:a]} mutable_options={}>)
+  end
+
 #   it "can convert multi-line strings" do
 #     multi_line = %(Actual contract errors: \e[33m{:title=>[\"must be filled\"], :content=>[\"must be filled\", \"size cannot be less than 8\"]}\e[0m.
 # --- expected

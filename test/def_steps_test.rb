@@ -11,6 +11,26 @@ class DefStepsTest < Minitest::Spec
     assert_equal flow_options, {application_ctx: {seq: [:a]}}
     assert_equal signal, my_right
     assert_equal remaining, []
+
+    lib_ctx, flow_options, signal, *remaining = tasks.method(:b).({}, flow_options, nil)
+    assert_equal flow_options, {application_ctx: {seq: [:a, :b]}}
+  end
+
+  it "{#def_steps}" do
+    my_right  = Class.new
+    tasks     = Trailblazer::Core.def_steps(:a, :b)
+
+    application_ctx = {seq: []}
+
+    return_value = tasks.method(:a).(application_ctx, **application_ctx)
+
+    assert_equal return_value, true
+    assert_equal application_ctx, {seq: [:a]}
+
+    return_value = tasks.method(:b).(application_ctx, **application_ctx)
+
+    assert_equal return_value, true
+    assert_equal application_ctx, {seq: [:a, :b]}
   end
 
   it "{#def_tasks} in an Activity" do

@@ -27,14 +27,19 @@ module Trailblazer
         def_tasks(name).method(name)
       end
 
-      def self.def_tasks(*names)
+      def self.def_tasks(*names, success_signal: Activity::Right)
         Module.new do
           module_function
 
           names.each do |name|
-            define_method(name) do |ctx, flow_options, circuit_options|
-              ctx[:seq] << name
-              signal = ctx.key?(name) ? ctx[name] : Activity::Right
+            define_method(name) do |ctx, flow_options, _signal, **|
+              target_ctx = flow_options[:application_ctx]
+
+              target_ctx[:seq] << name
+
+              flow_options = flow_options.merge(application_ctx: target_ctx)
+
+              signal = target_ctx.key?(name) ? target_ctx[name] : success_signal
 
               return ctx, flow_options, signal
             end

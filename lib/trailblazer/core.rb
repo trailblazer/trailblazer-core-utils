@@ -5,6 +5,7 @@ require "trailblazer/core/utils/inspect"
 require "trailblazer/core/utils/strip"
 require "trailblazer/core/utils/def_steps"
 require "trailblazer/core/utils/assertions"
+require "trailblazer/core/utils/assert_run"
 
 module Trailblazer
   module Core

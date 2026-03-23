@@ -120,13 +120,9 @@ class AssertRunTest < Minitest::Spec
       node: true
   end
 
-  it "accepts {:lib_ctx}" do
-    my_pipe = Trailblazer::Circuit::Builder.Pipeline(
-      [:a, :a, Trailblazer::Circuit::Task::Adapter::LibInterface::InstanceMethod],
-    )
-
-    assert_run my_pipe, seq: [:a],
-      lib_ctx: {exec_context: my_exec_context}
+  it "accepts {:application_ctx}" do
+    lib_ctx, flow_options = assert_run my_pipe, seq: [:x, :a],
+      application_ctx: {seq: [:x]}
   end
 
   it "accepts {:flow_options}" do
@@ -134,10 +130,12 @@ class AssertRunTest < Minitest::Spec
       flow_options: {application_ctx: {seq: [:x]}}
   end
 
-  it "accepts {**application_ctx} to add variables to the input {application_ctx}" do
-    lib_ctx, flow_options = assert_run my_pipe, seq: [:a],
-      mode: :override
+  it "accepts {**lib_ctx} to add variables to lib_ctx" do
+    my_pipe = Trailblazer::Circuit::Builder.Pipeline(
+      [:a, :a, Trailblazer::Circuit::Task::Adapter::LibInterface::InstanceMethod],
+    )
 
-    assert_equal flow_options, {application_ctx: {seq: [:a], mode: :override}}
+    lib_ctx, flow_options = assert_run my_pipe, seq: [:a],
+      exec_context: my_exec_context
   end
 end

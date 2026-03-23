@@ -1,7 +1,7 @@
 module Trailblazer
   module Core::Utils
     module AssertRun
-      def assert_run(circuit, node: false, exec_context: nil, terminus: nil, seq:, flow_options: {}, lib_ctx: {}, **application_ctx)
+      def assert_run(circuit, node: false, terminus: nil, seq:, flow_options: {}, application_ctx: {}, **lib_ctx)
         runner = Trailblazer::Circuit::Node::Runner
 
         # If circuit isn't a Node instance already, wrap it in a "canonical node".

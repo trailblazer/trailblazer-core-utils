@@ -4,8 +4,9 @@ require "trailblazer/core/utils/symbol_inspect_for"
 require "trailblazer/core/utils/inspect"
 require "trailblazer/core/utils/strip"
 require "trailblazer/core/utils/def_steps"
-require "trailblazer/core/utils/assertions"
+require "trailblazer/core/utils/assertions" # TODO: remove?
 require "trailblazer/core/utils/assert_run"
+require "trailblazer/core/utils/assert_equal"
 
 module Trailblazer
   module Core

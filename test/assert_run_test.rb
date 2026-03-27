@@ -3,22 +3,10 @@ require "trailblazer/circuit"
 
 
 class AssertRunTest < Minitest::Spec
+  include Testable::AssertTestCaseFails
 
-  def assert_test_case_fails(test, number: 1, error_message:)
-    test_case = test.new(:"test_000#{number}_anonymous")
-    failures, assertions, _ = test_case.()
-
-    assert_equal failures.size, 1
-    # pp failures[0].message
-    assert_equal failures[0].to_s, error_message
-  end
-
-  # TODO: this is also used in {trb-test}.
   class MySpec < Minitest::Spec
-    def call
-      run
-      return @failures, @assertions, @result
-    end
+    include Testable
 
     let(:my_exec_context) do
       Class.new do # FIXME: use #def_tasks

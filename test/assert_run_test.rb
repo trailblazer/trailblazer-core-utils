@@ -1,21 +1,25 @@
 require "test_helper"
 require "trailblazer/circuit"
 
-
 class AssertRunTest < Minitest::Spec
   include Testable::AssertTestCaseFails
+
+  T = Trailblazer::Core
+
+  class MyExecContext
+    def self.a(lib_ctx, flow_options, _, target_ctx:, **)
+      lib_ctx = lib_ctx.merge(target_ctx: target_ctx.merge(seq: target_ctx[:seq] + [:a]))
+
+      return lib_ctx, flow_options, nil
+    end
+  end
+
 
   class MySpec < Minitest::Spec
     include Testable
 
     let(:my_exec_context) do
-      Class.new do # FIXME: use #def_tasks
-        def a(lib_ctx, flow_options, signal, **)
-          flow_options[:application_ctx][:seq] << :a
-
-          return lib_ctx, flow_options, signal
-        end
-      end.new
+      MyExecContext
     end
 
     include Trailblazer::Core::Utils::AssertRun
@@ -23,15 +27,7 @@ class AssertRunTest < Minitest::Spec
 
   include Trailblazer::Core::Utils::AssertRun
 
-  let(:my_exec_context) do
-    Class.new do
-      def a(lib_ctx, flow_options, signal, **)
-        flow_options[:application_ctx][:seq] << :a
-
-        return lib_ctx, flow_options, signal
-      end
-    end.new
-  end
+  let(:my_exec_context) { MyExecContext }
 
   let(:my_pipe) do
     Trailblazer::Circuit::Builder.Pipeline(
@@ -46,16 +42,28 @@ class AssertRunTest < Minitest::Spec
   end
 
   it "accepts {:terminus} which is the expected returned last signal" do
-    my_callable = ->(lib_ctx, flow_options, signa) { return lib_ctx, flow_options, :Left }
+    my_callable = ->(lib_ctx, flow_options, signal, **) { return lib_ctx, flow_options, "Left" }
 
     my_pipe = Trailblazer::Circuit::Builder.Pipeline(
       [:a, my_callable],
     )
 
     lib_ctx, flow_options, signal = assert_run my_pipe, seq: [],
-      terminus: :Left
+      terminus: "Left"
 
-    assert_equal signal, :Left
+    assert_equal signal, "Left"
+  end
+
+  it "accepts {terminus: :semantic} and automatically extracts the Terminus instance for you" do
+    my_activity = Class.new(Trailblazer::Activity::Railway) do
+      step :a
+      include T.def_steps(:a)
+    end
+
+    lib_ctx, flow_options, signal = assert_run my_activity, seq: [:a],
+      terminus: :success
+
+    assert_equal signal.inspect, "#<struct Trailblazer::Activity::Terminus::Success semantic=:success>"
   end
 
   it "raises with non-matching {:terminus}" do
@@ -66,11 +74,12 @@ class AssertRunTest < Minitest::Spec
         )
 
         lib_ctx, flow_options = assert_run my_pipe, seq: [],
-          terminus: :Left
+          terminus: Object
       end
     end
 
-    assert_test_case_fails _test, error_message: "Expected: :Left
+    assert_test_case_fails _test, error_message: "Expected terminus Object does not match actual nil.
+Expected: Object
   Actual: nil"
   end
 
@@ -85,10 +94,12 @@ class AssertRunTest < Minitest::Spec
       end
     end
 
-    assert_test_case_fails _test, error_message: "Expected: [:a, :b]\n  Actual: [:a]"
+    assert_test_case_fails _test, error_message: ":seq does not match.
+Expected: [:a, :b]
+  Actual: [:a]"
   end
 
-  it "accepts {:seq} which is the expected {application_ctx[:seq]} variable after running the node" do
+  it "accepts {:seq} which is the expected {target_ctx[:seq]} variable after running the node" do
     lib_ctx, flow_options, signal = assert_run my_pipe,
       seq: [:a]
   end
@@ -96,34 +107,36 @@ class AssertRunTest < Minitest::Spec
   it "returns {lib_ctx, flow_options, signal}" do
     lib_ctx, flow_options, signal = assert_run my_pipe, seq: [:a]
 
-    assert_equal lib_ctx, {}
-    assert_equal flow_options, {application_ctx: {seq: [:a]}}
+    assert_equal lib_ctx, {target_ctx: {seq: [:a]}}
+    assert_equal flow_options, {}
     assert_nil signal
   end
 
   it "accepts {node: true}" do
-    my_node = Trailblazer::Circuit::Node::Scoped[:d, my_pipe, Trailblazer::Circuit::Processor]
+    my_node = Trailblazer::Circuit::Node::MergeToCircuitOptions[:a, Trailblazer::Circuit::Task::Adapter::LibInterface::InstanceMethod, merge_to_circuit_options: {exec_context: MyExecContext}]
 
     lib_ctx, flow_options, signal = assert_run my_node, seq: [:a],
       node: true
   end
 
-  it "accepts {:application_ctx}" do
+  it "accepts {:target_ctx}" do
     lib_ctx, flow_options = assert_run my_pipe, seq: [:x, :a],
-      application_ctx: {seq: [:x]}
+      target_ctx: {seq: [:x]}
   end
 
   it "accepts {:flow_options}" do
-    assert_run my_pipe, seq: [:x, :a],
-      flow_options: {application_ctx: {seq: [:x]}}
+    _, flow_options = assert_run my_pipe, seq: [:a],
+      flow_options: {trace: true}
+
+    assert_equal flow_options, {trace: true}
   end
 
-  it "accepts {**lib_ctx} to add variables to lib_ctx" do
+  it "accepts {:circuit_options} to add variables to lib_ctx" do
     my_pipe = Trailblazer::Circuit::Builder.Pipeline(
       [:a, :a, Trailblazer::Circuit::Task::Adapter::LibInterface::InstanceMethod],
     )
 
     lib_ctx, flow_options = assert_run my_pipe, seq: [:a],
-      exec_context: my_exec_context
+      circuit_options: {exec_context: my_exec_context}
   end
 end

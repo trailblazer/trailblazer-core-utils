@@ -1,20 +1,32 @@
 module Trailblazer
   module Core::Utils
     module AssertRun
-      def assert_run(circuit, node: false, terminus: nil, seq:, flow_options: {}, application_ctx: {}, signal: nil, circuit_options: {}, **lib_ctx)
+      # DISCUSS: use Invoke.call() here?
+      def assert_run(circuit, node: false, terminus: nil, seq:, flow_options: {}, signal: nil, circuit_options: {}, target_ctx: {seq: []}, **lib_ctx)
         runner = Trailblazer::Circuit::Node::Runner
 
         # If circuit isn't a Node instance already, wrap it in a "canonical node".
-        canonical_node = node ? circuit : Trailblazer::Circuit::Node[:my_canonical, circuit, Trailblazer::Circuit::Processor]
+        canonical_node = node ? circuit : Trailblazer::Circuit::Node[circuit, Trailblazer::Circuit::Processor] # TODO: remove :node and figure it out automatically.
 
-        circuit_options = circuit_options.merge(runner: runner)
+        circuit_options = {runner: runner}.merge(circuit_options)
+        circuit_options = circuit_options.merge(node: canonical_node)
         circuit_options = circuit_options.merge(context_implementation: Trailblazer::Circuit::Context) # FIXME: remove
 
-        flow_options = {application_ctx: {seq: [], **application_ctx}, **flow_options}
-        lib_ctx, flow_options, signal = runner.(canonical_node, lib_ctx, flow_options, signal, **circuit_options)
+        lib_ctx = lib_ctx.merge(target_ctx: target_ctx)
+
+        # TODO: use the public Invoke.call API! will save us some lines of code above.
+        # lib_ctx, flow_options, signal = Activity::Invoke.invoke_runner(lib_ctx, flow_options, signal, **circuit_options)
+        lib_ctx, flow_options, signal = runner.(lib_ctx, flow_options, signal, **circuit_options)
+
+        if terminus.is_a?(Symbol)
+          terminus = circuit.to_h[:outputs].fetch(terminus).signal
+        end
 
         assert_equal signal, terminus, "Expected terminus #{terminus.inspect} does not match actual #{signal.inspect}"
-        assert_equal flow_options[:application_ctx][:seq], seq, ":seq does not match" # FIXME: test all ctx variables.
+
+        target_ctx = lib_ctx[:target_ctx]
+
+        assert_equal target_ctx[:seq], seq, ":seq does not match" # FIXME: test all ctx variables.
 
         return lib_ctx, flow_options, signal
       end
@@ -22,4 +34,4 @@ module Trailblazer
   end
 end
 
-# FIXME: test :circuit_options kw
+# FIXME: test **lib_ctx

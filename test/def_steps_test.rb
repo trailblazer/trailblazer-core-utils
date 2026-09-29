@@ -5,15 +5,16 @@ class DefStepsTest < Minitest::Spec
     my_right  = Class.new
     tasks     = Trailblazer::Core.def_tasks(:a, :b, success_signal: my_right)
 
-    lib_ctx, flow_options, signal, *remaining = tasks.method(:a).({}, {application_ctx: {seq: []}}, nil)
+    lib_ctx, flow_options, signal, *remaining = tasks.method(:a).(options = {target_ctx: {seq: []}}, {}, nil, **options)
 
-    assert_equal lib_ctx, {}
-    assert_equal flow_options, {application_ctx: {seq: [:a]}}
+    assert_equal lib_ctx, {target_ctx: {seq: [:a]}}
+    assert_equal flow_options, {}
     assert_equal signal, my_right
     assert_equal remaining, []
 
-    lib_ctx, flow_options, signal, *remaining = tasks.method(:b).({}, flow_options, nil)
-    assert_equal flow_options, {application_ctx: {seq: [:a, :b]}}
+    lib_ctx, flow_options, signal, *remaining = tasks.method(:b).(lib_ctx, flow_options, nil, **lib_ctx)
+    assert_equal lib_ctx, {target_ctx: {seq: [:a, :b]}}
+    assert_equal flow_options, {}
   end
 
   it "{#def_steps}" do

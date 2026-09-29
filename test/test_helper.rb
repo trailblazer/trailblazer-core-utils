@@ -1,6 +1,8 @@
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 require "trailblazer/core"
 
+require "trailblazer/activity/dsl"
+
 require "minitest/autorun"
 
 Minitest::Spec.class_eval do
@@ -18,7 +20,7 @@ module Testable
     def assert_test_case_fails(test, number: 1, error_message:)
       test_case = test.new(:"test_000#{number}_anonymous")
       failures, assertions, _ = test_case.()
-
+pp failures
       assert_equal failures.size, 1
       # pp failures[0].message
       assert_equal failures[0].to_s, error_message

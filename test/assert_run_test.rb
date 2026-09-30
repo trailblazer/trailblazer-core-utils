@@ -137,6 +137,6 @@ Expected: [:a, :b]
     )
 
     lib_ctx, flow_options = assert_run my_pipe, seq: [:a],
-      circuit_options: {exec_context: my_exec_context}
+      circuit_options: {exec_context: my_exec_context, runner: Trailblazer::Circuit::Node::Runner}
   end
 end

@@ -2,7 +2,7 @@ module Trailblazer
   module Core::Utils
     module AssertRun
       # DISCUSS: use Invoke.call() here?
-      def assert_run(circuit, node: false, terminus: nil, seq:, flow_options: {}, signal: nil, circuit_options: {runner: Trailblazer::Circuit::Node::Runner, }, target_ctx: {seq: []}, **lib_ctx)
+      def assert_run(circuit, node: false, terminus: nil, seq:, flow_options: {}, signal: nil, circuit_options: {runner: Trailblazer::Circuit::Node::Runner}, target_ctx: {seq: []}, **lib_ctx)
         # If circuit isn't a Node instance already, wrap it in a "canonical node".
         canonical_node = node ? circuit : Trailblazer::Circuit::Node[circuit, Trailblazer::Circuit::Processor] # TODO: remove :node and figure it out automatically.
 

@@ -108,12 +108,12 @@ Expected: [:a, :b]
     lib_ctx, flow_options, signal = assert_run my_pipe, seq: [:a]
 
     assert_equal lib_ctx, {target_ctx: {seq: [:a]}}
-    assert_equal flow_options, {}
+    assert_equal flow_options.to_h, {}
     assert_nil signal
   end
 
   it "accepts {node: my_node}" do
-    my_node = Trailblazer::Circuit::Node::MergeToCircuitOptions[:a, Trailblazer::Circuit::Task::Adapter::LibInterface::InstanceMethod, merge_to_circuit_options: {exec_context: MyExecContext}]
+    my_node = Trailblazer::Circuit::Builder.Node(:a, Trailblazer::Circuit::Task::Adapter::LibInterface::InstanceMethod, exec_context: MyExecContext, copy_to_outer_ctx: [:target_ctx])
 
     lib_ctx, flow_options, signal = assert_run node: my_node, seq: [:a]
   end
@@ -125,18 +125,16 @@ Expected: [:a, :b]
 
   it "accepts {:flow_options}" do
     _, flow_options = assert_run my_pipe, seq: [:a],
-      flow_options: {trace: true}
+      flow_options: Trailblazer::Circuit::Node::Runner.new(trace: true)
 
-    assert_equal flow_options, {trace: true}
+    assert_equal flow_options.to_h, {trace: true}
   end
 
-  it "accepts {:circuit_options} to add variables to lib_ctx" do
-    my_pipe = Trailblazer::Circuit::Builder.Pipeline(
-      [:a, :a, Trailblazer::Circuit::Task::Adapter::LibInterface::InstanceMethod],
-    )
+  it "accepts kwargs such as {:exec_context} to add to lib_ctx" do
+    my_node = Trailblazer::Circuit::Builder.Node(:a, Trailblazer::Circuit::Task::Adapter::LibInterface::InstanceMethod, exec_context: MyExecContext, copy_to_outer_ctx: [:target_ctx])
 
-    lib_ctx, flow_options = assert_run my_pipe, seq: [:a],
-      circuit_options: {exec_context: my_exec_context, runner: Trailblazer::Circuit::Node::Runner}
+    lib_ctx, flow_options = assert_run node: my_node, seq: [:a],
+      exec_context: my_exec_context
   end
 
   it "raises with non-matching {:expected_target_variables}" do

@@ -1,21 +1,17 @@
 module Trailblazer
   module Core::Utils
     module AssertRun
-      # DISCUSS: use Invoke.call() here?
-      def assert_run(circuit = nil, node: nil, terminus: nil, seq: nil, flow_options: {}, signal: nil, circuit_options: {runner: Trailblazer::Circuit::Node::Runner}, target_ctx: {seq: []}, expected_target_variables: {}, **lib_ctx)
+# TODO: Use .Builder() and never build a node here.
+      def assert_run(circuit = nil, id = nil, node: nil, terminus: nil, seq: nil,
+          flow_options: Circuit::Node::Runner.new(), signal: nil, target_ctx: {seq: []}, expected_target_variables: {}, **lib_ctx)
         # If circuit isn't a Node instance already, wrap it in a "canonical node".
         canonical_node = node ? node : Trailblazer::Circuit::Node[circuit, Trailblazer::Circuit::Processor] # TODO: remove :node and figure it out automatically.
-
-        # circuit_options = {runner: runner}.merge(circuit_options)
-        runner = circuit_options.fetch(:runner)
-        circuit_options = circuit_options.merge(node: canonical_node)
-        circuit_options = circuit_options.merge(context_implementation: Trailblazer::Circuit::Context) # FIXME: remove
 
         lib_ctx = lib_ctx.merge(target_ctx: target_ctx)
 
         # TODO: use the public Invoke.call API! will save us some lines of code above.
         # lib_ctx, flow_options, signal = Activity::Invoke.invoke_runner(lib_ctx, flow_options, signal, **circuit_options)
-        lib_ctx, flow_options, signal = runner.(lib_ctx, flow_options, signal, **circuit_options)
+        lib_ctx, flow_options, signal = flow_options.(lib_ctx, flow_options, signal, canonical_node, id)
 
         if terminus.is_a?(Symbol)
           terminus = circuit.to_h[:outputs].fetch(terminus).signal

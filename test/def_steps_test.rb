@@ -28,6 +28,16 @@ class DefStepsTest < Minitest::Spec
     assert_equal flow_options, {}
   end
 
+  it "{#def_tasks} with {passthrough_signal: true} returns the incoming signal" do
+    tasks = Trailblazer::Core.def_tasks(:a, success_signal: nil, passthrough_signal: true)
+
+    _, _, signal = tasks.method(:a).(options = {target_ctx: {seq: []}}, {}, Object, **options)
+    assert_equal signal, Object
+
+    _, _, signal = tasks.method(:a).(options = {target_ctx: {seq: [], a: Class}}, {}, Object, **options)
+    assert_equal signal, Class # an explicit {target_ctx[name]} still wins.
+  end
+
   it "{#def_steps}" do
     my_right  = Class.new
     tasks     = Trailblazer::Core.def_steps(:a, :b)
